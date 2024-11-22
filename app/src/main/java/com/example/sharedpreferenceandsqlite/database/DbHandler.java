@@ -112,6 +112,14 @@ public class DbHandler extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    /** Method to delete user */
+    public boolean deleteUser(String email){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(TABLE_NAME, EMAIL_COL + " = ?", new String[]{email});
+        db.close();
+        return rowsDeleted > 0;
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME); // Correct table reference

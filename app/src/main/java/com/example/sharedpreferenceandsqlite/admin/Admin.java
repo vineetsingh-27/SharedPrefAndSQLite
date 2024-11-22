@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -25,7 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
-public class Admin extends AppCompatActivity {
+public class Admin extends AppCompatActivity implements OnUserActionListener{
     TextView userNameAdmin, userEmailAdmin;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle toggle;
@@ -67,7 +68,7 @@ public class Admin extends AppCompatActivity {
         ArrayList<UserModel> userList = dbHandler.getAllUserDetails();
 
         /** Set adapter */
-        UserListAdapter adapter = new UserListAdapter(userList);
+        UserListAdapter adapter = new UserListAdapter(userList,this);
         userRecyclerView.setAdapter(adapter);
 
     }
@@ -85,5 +86,21 @@ public class Admin extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onUpdate(UserModel user) {
+        Toast.makeText(this, "Update user", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDelete(UserModel user) {
+        boolean success = dbHandler.deleteUser(user.getEmail());
+        if (success) {
+            ArrayList<UserModel> updatedList = dbHandler.getAllUserDetails();
+            ((UserListAdapter) userRecyclerView.getAdapter()).updateList(updatedList);
+        } else {
+            Toast.makeText(this, "Error deleting user", Toast.LENGTH_SHORT).show();
+        }
     }
 }
